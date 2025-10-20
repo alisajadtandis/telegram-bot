@@ -4,14 +4,137 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ورود - لیسه عالی خصوصی خاتم النبین</title>
-  <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    @font-face {
+      font-family: "Doran";
+      src: url("https://cdn.fontcdn.ir/Font/Persian/Doran/Doran-Regular.woff2") format("woff2");
+    }
+
+    body {
+      margin: 0;
+      font-family: "Doran", sans-serif;
+      background-color: #0d4c92;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      direction: rtl;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #0d4c92;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      border: 2px solid #fff;
+    }
+
+    .logo-wrapper {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 20px auto;
+      border: 3px solid #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+    }
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      line-height: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+      color: #e2e2e2;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      outline: none;
+      font-size: 1rem;
+      text-align: right;
+    }
+
+    .btn {
+      background-color: #003566;
+      color: white;
+      border: 1px solid white;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+      font-family: "Doran", sans-serif;
+    }
+
+    .btn:hover {
+      background-color: #002855;
+    }
+
+    .links {
+      margin-top: 18px;
+      font-size: 0.95rem;
+    }
+
+    .links a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.1);
+    }
+  </style>
 </head>
 <body>
   <div class="login-container">
     <div class="card">
       <div class="logo-wrapper">
-        <img src="logo.jpeg" alt="لوگو لیسه" class="logo" />
+        <img src="https://via.placeholder.com/130x130/0088cc/ffffff?text=LOGO" alt="لوگو لیسه" class="logo" />
       </div>
 
       <h1>
@@ -44,53 +167,30 @@
   </div>
 
   <script>
-    // ارتباط با تلگرام
     let tg = window.Telegram.WebApp;
-    
-    // وقتی صفحه لود شد
     tg.ready();
-    tg.expand(); // باز کردن کامل صفحه
-    tg.enableClosingConfirmation(); // جلوگیری از بسته شدن تصادفی
+    tg.expand();
     
-    // تنظیم رنگ‌های تلگرام
-    tg.setHeaderColor('#0d4c92');
-    tg.setBackgroundColor('#0d4c92');
-
-    // مدیریت فرم لاگین
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      
       let username = document.getElementById('username').value;
       let password = document.getElementById('password').value;
       
-      // نمایش پیام در حال پردازش
       const messageEl = document.getElementById('message');
       messageEl.innerHTML = "🔐 در حال بررسی اطلاعات...";
-      messageEl.style.color = "#fff";
       
-      // شبیه‌سازی پردازش (در نسخه واقعی باید به سرور وصل شی)
       setTimeout(function() {
-        // ارسال داده به ربات تلگرام
         tg.sendData(JSON.stringify({
           action: 'login',
           username: username,
-          password: password,
-          timestamp: new Date().getTime()
+          password: password
         }));
-        
         messageEl.innerHTML = "✅ ورود موفق! در حال انتقال...";
-        
-        // بستن وب اپ بعد از 2 ثانیه
         setTimeout(function() {
           tg.close();
         }, 2000);
-        
       }, 1500);
     });
-    
-    // نمایش اطلاعات اولیه کاربر (اگر وارد شده باشد)
-    tg.ready();
-    console.log("User data:", tg.initDataUnsafe);
   </script>
 </body>
 </html>
