@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ورود - لیسه عالی خصوصی خاتم النبین</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="login-container">
+    <div class="card">
+      <div class="logo-wrapper">
+        <img src="logo.jpeg" alt="لوگو لیسه" class="logo" />
+      </div>
+
+      <h1>
+        به ربات<br>
+        لیسه عالی خصوصی خاتم النبین<br>
+        خوش آمدید!!!
+      </h1>
+
+      <p class="subtitle">
+        برای استفاده از ربات نام کاربری و پسورد خود را وارد نمایید...
+      </p>
+
+      <form id="loginForm">
+        <label for="username">نام کاربری خود را وارد نمایید :</label>
+        <input type="text" id="username" name="username" placeholder="نام کاربری" required>
+
+        <label for="password">پسورد خود را وارد نمایید :</label>
+        <input type="password" id="password" name="password" placeholder="پسورد" required>
+
+        <button type="submit" class="btn">ورود</button>
+      </form>
+
+      <div id="message" class="message"></div>
+
+      <div class="links">
+        <a href="#">پسورد خود را فراموش کرده‌اید؟</a><br>
+        <a href="#">ساخت حساب کاربری ...</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ارتباط با تلگرام
+    let tg = window.Telegram.WebApp;
+    
+    // وقتی صفحه لود شد
+    tg.ready();
+    tg.expand(); // باز کردن کامل صفحه
+    tg.enableClosingConfirmation(); // جلوگیری از بسته شدن تصادفی
+    
+    // تنظیم رنگ‌های تلگرام
+    tg.setHeaderColor('#0d4c92');
+    tg.setBackgroundColor('#0d4c92');
+
+    // مدیریت فرم لاگین
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      let username = document.getElementById('username').value;
+      let password = document.getElementById('password').value;
+      
+      // نمایش پیام در حال پردازش
+      const messageEl = document.getElementById('message');
+      messageEl.innerHTML = "🔐 در حال بررسی اطلاعات...";
+      messageEl.style.color = "#fff";
+      
+      // شبیه‌سازی پردازش (در نسخه واقعی باید به سرور وصل شی)
+      setTimeout(function() {
+        // ارسال داده به ربات تلگرام
+        tg.sendData(JSON.stringify({
+          action: 'login',
+          username: username,
+          password: password,
+          timestamp: new Date().getTime()
+        }));
+        
+        messageEl.innerHTML = "✅ ورود موفق! در حال انتقال...";
+        
+        // بستن وب اپ بعد از 2 ثانیه
+        setTimeout(function() {
+          tg.close();
+        }, 2000);
+        
+      }, 1500);
+    });
+    
+    // نمایش اطلاعات اولیه کاربر (اگر وارد شده باشد)
+    tg.ready();
+    console.log("User data:", tg.initDataUnsafe);
+  </script>
+</body>
+</html>

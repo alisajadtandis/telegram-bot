@@ -1,0 +1,124 @@
+/* فونت دوران از CDN */
+@font-face {
+  font-family: "Doran";
+  src: url("https://cdn.fontcdn.ir/Font/Persian/Doran/Doran-Regular.woff2") format("woff2");
+}
+
+body {
+  margin: 0;
+  font-family: "Doran", sans-serif;
+  background-color: #0d4c92;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  direction: rtl;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.card {
+  background: #0d4c92;
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  border: 2px solid #fff;
+}
+
+/* قاب گرد برای لوگو */
+.logo-wrapper {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 20px auto;
+  border: 3px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+h1 {
+  font-size: 1.3rem;
+  line-height: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+  color: #e2e2e2;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+input {
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  outline: none;
+  font-size: 1rem;
+  text-align: right;
+}
+
+.btn {
+  background-color: #003566;
+  color: white;
+  border: 1px solid white;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 10px;
+  font-family: "Doran", sans-serif;
+}
+
+.btn:hover {
+  background-color: #002855;
+}
+
+.links {
+  margin-top: 18px;
+  font-size: 0.95rem;
+}
+
+.links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.1);
+}
