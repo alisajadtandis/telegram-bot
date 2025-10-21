@@ -1,197 +1,636 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ورود - لیسه عالی خصوصی خاتم النبین</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لیسه خاتم النبیین - پنل کاربری</title>
+
   <style>
-    @font-face {
-      font-family: "Doran";
-      src: url("https://cdn.fontcdn.ir/Font/Persian/Doran/Doran-Regular.woff2") format("woff2");
+    /* فونت دوران: اگر فایل محلی دارید در پوشه fonts/Doran.woff2 قرار دهید */
+    @font-face { font-family: 'Doran'; src: url('fonts/Doran.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+    @font-face { font-family: 'Doran-fallback'; src: url('https://cdn.fontcdn.ir/Font/Persian/Doran/Doran-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+    :root{ --primary:#002855; --white:#fff; --muted:#f5f8fb; --accent:#e8f1ff; --motion-dur:320ms; --motion-ease:cubic-bezier(.2,.9,.3,1); }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Doran','Doran-fallback','Vazirmatn',Tahoma,'Segoe UI',sans-serif;background:var(--muted);color:var(--primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+    /* SIDE LOGO (fixed blurred image on left) */
+    /* uses provided logo URL */
+    #sideLogo {
+      position:fixed;
+      left:0;
+      top:50%;
+      transform:translateY(-50%) translateX(0);
+      z-index:10;
+      pointer-events:none;
+      display:block;
+      width:360px;
+      max-width:40vw;
+      height:auto;
+      overflow:hidden;
+      filter: blur(12px) saturate(.9);
+      opacity:.22;
+      -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0) 80%);
+      mask-image: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0) 80%);
+    }
+    #sideLogo img { width:100%; height:auto; display:block; }
+
+    /* on mobile: make half of image off-screen (only half visible) */
+    @media (max-width:700px){
+      #sideLogo{ width:140vw; max-width:none; left: -50vw; transform:translateY(-50%); opacity:.18; filter: blur(12px) saturate(.9); }
     }
 
-    body {
-      margin: 0;
-      font-family: "Doran", sans-serif;
-      background-color: #0d4c92;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      direction: rtl;
-    }
+    /* make sure content sits above sideLogo */
+    #loginScreen, #appRoot, .container { position:relative; z-index:20; }
 
-    .login-container {
-      width: 100%;
-      max-width: 420px;
-      padding: 20px;
-    }
+    /* ---- LOGIN (fullscreen) ---- */
+    #loginScreen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#08345f 0%, #0d4c92 100%);z-index:120;transition:opacity .25s ease}
+    .login-container{width:100%;max-width:420px;padding:20px}
+    /* reduce logo inside card and use provided link */
+    .login-card{background:transparent;border-radius:15px;padding:25px;text-align:center;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,0.25);border:2px solid rgba(255,255,255,0.12)}
+    .logo-wrapper{width:80px;height:80px;border-radius:50%;overflow:hidden;margin:0 auto 14px auto;border:3px solid #fff;display:flex;justify-content:center;align-items:center;background:#fff}
+    .logo{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    h1{font-size:1.1rem;line-height:1.8rem;margin-bottom:8px}
+    .subtitle{font-size:.95rem;margin-bottom:18px;color:rgba(255,255,255,0.9)}
+    form{display:flex;flex-direction:column;gap:10px}
+    label{font-size:.9rem;text-align:right}
+    .login-input{padding:10px;border:none;border-radius:12px;outline:none;font-size:1rem;text-align:right;background:rgba(255,255,255,0.07);color:#fff}
+    .login-input::placeholder{color:rgba(255,255,255,0.75)}
+    .btn-login{background-color:#003566;color:white;border:1px solid rgba(255,255,255,0.12);padding:12px;border-radius:12px;font-size:1.02rem;cursor:pointer;transition:background .2s;font-family:inherit}
+    .btn-login:hover{background-color:var(--primary)}
+    .links{margin-top:12px;font-size:.9rem}
+    .links a{color:#fff;text-decoration:none;opacity:.95}
+    .message{margin-top:12px;padding:10px;border-radius:8px;font-size:.95rem;background:rgba(255,255,255,0.06);min-height:36px;display:flex;align-items:center;justify-content:center}
 
-    .card {
-      background: #0d4c92;
-      border-radius: 15px;
-      padding: 25px;
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
-      border: 2px solid #fff;
-    }
+    /* hide login when not needed */
+    #loginScreen.hidden{opacity:0;pointer-events:none;visibility:hidden}
 
-    .logo-wrapper {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin: 0 auto 20px auto;
-      border: 3px solid #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #fff;
-    }
-
-    .logo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    h1 {
-      font-size: 1.3rem;
-      line-height: 2.2rem;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      font-size: 0.95rem;
-      margin-bottom: 25px;
-      color: #e2e2e2;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    label {
-      font-size: 0.9rem;
-      text-align: right;
-    }
-
-    input {
-      padding: 10px;
-      border: none;
-      border-radius: 12px;
-      outline: none;
-      font-size: 1rem;
-      text-align: right;
-    }
-
-    .btn {
-      background-color: #003566;
-      color: white;
-      border: 1px solid white;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      margin-top: 10px;
-      font-family: "Doran", sans-serif;
-    }
-
-    .btn:hover {
-      background-color: #002855;
-    }
-
-    .links {
-      margin-top: 18px;
-      font-size: 0.95rem;
-    }
-
-    .links a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .links a:hover {
-      text-decoration: underline;
-    }
-
-    .message {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      background: rgba(255,255,255,0.1);
-    }
+    /* ---- APP (remaining CSS unchanged) ---- */
+    .container{display:flex;height:100vh;gap:0;overflow:hidden;transition:padding-left .28s}
+    .sidebar{width:220px;background:var(--primary);color:var(--white);padding:16px;display:flex;flex-direction:column;gap:12px;transition:width .28s var(--motion-ease)}
+    .sidebar.collapsed{width:64px}
+    .toggle-btn{background:rgba(255,255,255,0.06);border:none;color:var(--white);padding:8px;border-radius:8px;cursor:pointer;text-align:center}
+    .logo{font-weight:700;font-size:18px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px}
+    .logo .short{display:none}
+    .sidebar.collapsed .logo .long{display:none}
+    .sidebar.collapsed .logo .short{display:block}
+    .user{display:flex;gap:12px;align-items:center;transition:opacity .2s}
+    .sidebar.collapsed .user .meta{display:none}
+    .avatar{width:48px;height:48;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-weight:700;transition:transform var(--motion-dur) var(--motion-ease), background var(--motion-dur)}
+    .nav{display:flex;flex-direction:column;gap:8px;margin-top:6px;overflow:auto}
+    .nav a{color:var(--white);text-decoration:none;padding:8px 10px;border-radius:8px;display:flex;gap:8px;align-items:center;opacity:0.98;cursor:pointer;transition:background-color var(--motion-dur)}
+    .nav a:hover,.nav a.active{background: rgba(255,255,255,0.06)}
+    .nav a .icon{width:28px;text-align:center}
+    .nav a .label{white-space:nowrap}
+    .sidebar.collapsed .nav a .label{display:none}
+    .main{flex:1;padding:20px;background:linear-gradient(180deg,#fff,#fbfdff 100%);overflow:auto;display:flex;flex-direction:column;transition:all .28s}
+    .header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .search{background:var(--primary);color:var(--white);border:none;padding:8px 12px;border-radius:8px}
+    .card-row{display:flex;gap:14px;margin-bottom:14px}
+    .card{flex:1;background:var(--white);padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(2,40,85,0.06);color:var(--primary);cursor:pointer;user-select:none;transition:transform var(--motion-dur) var(--motion-ease),box-shadow var(--motion-dur) var(--motion-ease);will-change:transform}
+    .card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 12px 30px rgba(2,40,85,0.08)}
+    .hi{font-size:20px;margin:0 0 6px 0}
+    .small{color:#6b7b8f;font-size:13px}
+    .section{margin-top:10px}
+    .table{width:100%;border-collapse:collapse;background:var(--white);border-radius:8px;overflow:hidden}
+    .table th,.table td{padding:10px;text-align:right;border-bottom:1px solid #eef3fb}
+    .table tbody tr{cursor:pointer}
+    .table tbody tr:hover{background:#f6fbff}
+    .footer{margin-top:auto;font-size:12px;color:#9fb0c9}
+    .profile{background:var(--white);padding:16px;border-radius:10px;box-shadow:0 6px 18px rgba(2,40,85,0.04);display:flex;gap:18px;align-items:flex-start;direction:rtl}
+    .profile .left{width:160px;text-align:center}
+    .profile img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #fff;box-shadow:0 6px 18px rgba(2,40,85,0.06);background:var(--accent);transition:transform var(--motion-dur) var(--motion-ease)}
+    .profile img:hover{transform:scale(1.03)}
+    .profile .meta{flex:1}
+    .btn{background:var(--primary);color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:#f7fbff;color:var(--primary);border:1px solid #e3eefc}
+    input[type="text"],input[type="password"],input[type="file"],select,textarea{padding:8px;border-radius:8px;border:1px solid #e7f0fb;width:100%;font-size:14px}
+    label{display:block;font-size:13px;margin-bottom:6px}
+    .row{display:flex;gap:12px}
+    .row .col{flex:1}
+    .chat{display:flex;gap:12px;height:70vh;min-height:320px}
+    .contacts{width:260px;background:var(--white);border-radius:10px;padding:10px;overflow:auto;box-shadow:0 6px 18px rgba(2,40,85,0.04)}
+    .contact{padding:8px;border-radius:8px;display:flex;gap:10px;align-items:center;cursor:pointer;opacity:0;transform:translateX(8px);transition:transform var(--motion-dur) var(--motion-ease),opacity var(--motion-dur)}
+    .contact.visible{opacity:1;transform:none}
+    .contact:hover{background:#f6fbff}
+    .contact.active{background:rgba(0,40,85,0.06)}
+    .contact .c-avatar{width:44px;height:44;border-radius:50%;background:#e8f1ff;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;transition:transform var(--motion-dur)}
+    .contact .c-avatar:hover{transform:scale(1.04)}
+    .conv{flex:1;background:var(--white);border-radius:10px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 6px 18px rgba(2,40,85,0.04)}
+    .conv .messages{padding:12px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:8px}
+    .msg{max-width:70%;padding:8px 10px;border-radius:10px;display:inline-block;opacity:0;transform:translateY(6px);transition:opacity calc(var(--motion-dur)*1.1) var(--motion-ease),transform var(--motion-dur) var(--motion-ease)}
+    .msg.show{opacity:1;transform:none}
+    .msg.in{background:#f1f8ff;color:var(--primary);align-self:flex-start}
+    .msg.out{background:var(--primary);color:white;align-self:flex-end}
+    .conv .compose{padding:10px;display:flex;gap:8px;border-top:1px solid #eef6ff}
+    .conv input[type="text"]{flex:1;padding:10px;border-radius:8px;border:1px solid #e7f0fb}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;z-index:60}
+    .modal{background:white;color:var(--primary);border-radius:8px;padding:18px;width:420px;max-width:94%;box-shadow:0 10px 40px rgba(0,0,0,0.18);direction:rtl;transform:scale(.98);opacity:0;transition:transform calc(var(--motion-dur)*1.05) var(--motion-ease),opacity calc(var(--motion-dur)*1.05) var(--motion-ease)}
+    .modal.open{transform:none;opacity:1}
+    .toast{position:fixed;left:20px;top:20px;background:var(--primary);color:white;padding:10px 14px;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,0.12);z-index:70;transform:translateY(-8px);opacity:0;transition:transform 220ms var(--motion-ease),opacity 220ms var(--motion-ease)}
+    .toast.show{transform:none;opacity:1}
+    @media (max-width:900px){.chat{flex-direction:column}.contacts{width:100%;height:160px;display:flex;overflow:auto}.container{flex-direction:column}.sidebar{width:100%;flex-direction:row;align-items:center}}
+    .animate-in{animation:fadeUp var(--motion-dur) var(--motion-ease) both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .parents-list{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+    .parent-item{display:flex;gap:12px;align-items:center;background:#fff;padding:10px;border-radius:8px;box-shadow:0 6px 14px rgba(2,40,85,0.04)}
+    .parent-item img{width:48px;height:48;border-radius:50%;object-fit:cover}
+    .parent-item .meta{flex:1}
+    .small-muted{font-size:13px;color:#6b7b8f}
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="card">
-      <div class="logo-wrapper">
-        <img src="https://i.ibb.co/7JKqJxVp/logo.jpg" alt="لوگو لیسه" class="logo" />
-      </div>
+  <!-- SIDE LOGO: uses provided image and shows blurred image on left edge -->
+  <div id="sideLogo" aria-hidden="true">
+    <img src="https://i.ibb.co/7JKqJxVp/logo.jpg" alt="لوگو">
+  </div>
 
-      <h1>
-        به ربات<br>
-        لیسه عالی خصوصی خاتم النبین<br>
-        خوش آمدید!!!
-      </h1>
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" role="dialog" aria-modal="true">
+    <div class="login-container">
+      <div class="login-card" role="document" aria-label="فرم ورود">
+        <div class="logo-wrapper"><img class="logo" src="https://i.ibb.co/7JKqJxVp/logo.jpg" alt="لوگو"></div>
+        <h1>به پنل لیسه خاتم النبیین خوش آمدید</h1>
+        <p class="subtitle">برای ورود نام کاربری و پسورد خود را وارد نمایید</p>
 
-      <p class="subtitle">
-        برای استفاده از ربات نام کاربری و پسورد خود را وارد نمایید...
-      </p>
+        <form id="loginForm" autocomplete="off">
+          <label for="username">نام کاربری</label>
+          <input id="username" class="login-input" name="username" placeholder="نام کاربری" required>
 
-      <form id="loginForm">
-        <label for="username">نام کاربری خود را وارد نمایید :</label>
-        <input type="text" id="username" name="username" placeholder="نام کاربری" required>
+          <label for="password">پسورد</label>
+          <input id="password" type="password" class="login-input" name="password" placeholder="پسورد" required>
 
-        <label for="password">پسورد خود را وارد نمایید :</label>
-        <input type="password" id="password" name="password" placeholder="پسورد" required>
+          <button type="submit" class="btn-login">ورود</button>
+        </form>
 
-        <button type="submit" class="btn">ورود</button>
-      </form>
+        <div id="loginMessage" class="message" aria-live="polite"></div>
 
-      <div id="message" class="message"></div>
-
-      <div class="links">
-        <a href="#">پسورد خود را فراموش کرده‌اید؟</a><br>
-        <a href="#">ساخت حساب کاربری ...</a>
+        <div class="links">
+          <a href="#" onclick="event.preventDefault()">پسورد را فراموش کرده‌اید؟</a> — <a href="#" onclick="event.preventDefault()">ساخت حساب</a>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- APP -->
+  <div id="appRoot" style="display:none">
+    <div class="container" role="application">
+      <aside class="sidebar" aria-label="منوی اصلی" id="sidebar">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="toggle-btn" id="toggleSidebar" aria-label="باز/بسته کردن منو">☰</button>
+          <div class="logo">
+            <div class="long">لیسه خاتم النبیین</div>
+            <div class="short">خاتم</div>
+          </div>
+        </div>
+
+        <div class="user">
+          <div class="avatar" id="sidebar-avatar" aria-hidden="true">ع</div>
+          <div class="meta">
+            <div style="font-weight:600" id="sidebar-name">علی رضایی</div>
+            <div style="font-size:12px;opacity:.9" id="sidebar-role">مدیر کلاس</div>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="ناوبری" id="nav">
+          <a href="#" data-section="dashboard" class="active" aria-current="page"><span class="icon">🏠</span><span class="label">داشبورد</span></a>
+          <a href="#" data-section="profile"><span class="icon">👤</span><span class="label">پروفایل</span></a>
+          <a href="#" data-section="messages"><span class="icon">💬</span><span class="label">پیام‌ها</span></a>
+          <a href="#" data-section="students"><span class="icon">📚</span><span class="label">دانش‌آموزان</span></a>
+          <a href="#" data-section="grades"><span class="icon">📝</span><span class="label">نمرات</span></a>
+          <a href="#" data-section="parents"><span class="icon">👪</span><span class="label">والدین</span></a>
+          <a href="#" data-section="settings"><span class="icon">⚙️</span><span class="label">تنظیمات</span></a>
+          <a href="#" data-section="logout"><span class="icon">⎋</span><span class="label">خروج</span></a>
+        </nav>
+
+        <div class="footer">نسخهٔ مینیمال — طراحی ساده</div>
+      </aside>
+
+      <main class="main" role="main" id="main">
+        <div class="header">
+          <div>
+            <h1 class="hi" id="page-title">سلام، علی</h1>
+            <div class="small" id="page-sub">به پنل کاربری خوش آمدید</div>
+          </div>
+          <div>
+            <input class="search" type="search" placeholder="جستجو..." aria-label="جستجو" id="search">
+          </div>
+        </div>
+
+        <div id="page-content">
+          <!-- Dashboard (default) -->
+          <section id="dashboard" class="page-section">
+            <div class="card-row">
+              <div class="card" data-action="classes"><div style="font-size:13px;color:#6b7b8f">کلاس‌های فعال</div><div style="font-size:28px;font-weight:700;margin-top:8px">8</div></div>
+              <div class="card" data-action="students"><div style="font-size:13px;color:#6b7b8f">دانش‌آموزان</div><div style="font-size:28px;font-weight:700;margin-top:8px">124</div></div>
+              <div class="card" data-action="notifications"><div style="font-size:13px;color:#6b7b8f">اعلان‌ها</div><div style="font-size:28px;font-weight:700;margin-top:8px">3</div></div>
+              <div class="card" data-action="parents"><div style="font-size:13px;color:#6b7b8f">والدین</div><div style="font-size:22px;font-weight:700;margin-top:8px">مدیریت والدین</div></div>
+            </div>
+
+            <section class="section" aria-label="آخرین دانش‌آموزان">
+              <h2 style="margin:0 0 10px 0">آخرین دانش‌آموزان</h2>
+              <table class="table" role="table" aria-label="students" id="students-table">
+                <thead><tr><th>نام</th><th>کلاس</th><th>وضعیت</th></tr></thead>
+                <tbody>
+                  <tr data-name="مینا حسینی" data-class="سال سوم" data-status="فعال"><td>مینا حسینی</td><td>سال سوم</td><td>فعال</td></tr>
+                  <tr data-name="امیر محمدی" data-class="سال دوم" data-status="غیبت"><td>امیر محمدی</td><td>سال دوم</td><td>غیبت</td></tr>
+                  <tr data-name="سارا احمدی" data-class="سال اول" data-status="فعال"><td>سارا احمدی</td><td>سال اول</td><td>فعال</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </section>
+
+          <!-- Parents panel -->
+          <section id="parents" class="page-section" style="display:none">
+            <h2 style="margin:0 0 12px 0">والدین — ساخت و مدیریت اکانت</h2>
+            <div class="card" style="padding:14px;display:flex;gap:12px;flex-direction:column">
+              <form id="parent-form" style="display:flex;flex-direction:column;gap:10px">
+                <div class="row">
+                  <div class="col"><label>نام کاربری</label><input type="text" id="parent-username" required></div>
+                  <div class="col"><label>پسورد</label><input type="password" id="parent-password" required></div>
+                </div>
+                <div class="row">
+                  <div class="col"><label>آی‌دی دانش‌آموز</label><input type="text" id="parent-student-id" placeholder="مثال: 12345"></div>
+                  <div class="col">
+                    <label>عکس والد</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <label class="btn secondary" id="parent-photo-btn" style="cursor:pointer">بارگذاری</label>
+                      <input type="file" id="parent-photo-input" accept="image/*" style="display:none">
+                      <img id="parent-photo-preview" style="width:48px;height:48;border-radius:50%;object-fit:cover;display:none" alt="preview">
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:8px">
+                  <button class="btn" id="parent-save">افزودن والد</button>
+                  <button type="button" class="btn secondary" id="parent-reset">پاک کردن فرم</button>
+                </div>
+              </form>
+
+              <div style="margin-top:8px">
+                <div style="font-weight:700;margin-bottom:8px">لیست والدین</div>
+                <div class="parents-list" id="parents-list" aria-live="polite"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Profile -->
+          <section id="profile" class="page-section" style="display:none">
+            <h2 style="margin:0 0 12px 0">پروفایل</h2>
+            <div class="profile" id="profile-panel">
+              <div class="left">
+                <img id="profile-photo" alt="عکس پروفایل">
+                <div style="margin-top:10px">
+                  <label class="btn secondary" id="change-photo-btn" style="display:inline-block;cursor:pointer">تغییر عکس</label>
+                  <input type="file" id="photo-input" accept="image/*" style="display:none">
+                </div>
+              </div>
+              <div class="meta">
+                <div style="margin-bottom:8px"><label>نام کامل</label><input type="text" id="input-name"></div>
+                <div style="margin-bottom:8px"><label>نقش</label><input type="text" id="input-role" placeholder="مثلاً: مدیر کلاس"></div>
+                <div style="margin:8px 0"><label>درباره</label><textarea id="input-bio" rows="3" placeholder="چند کلمه درباره شما..."></textarea></div>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button class="btn" id="save-profile">ذخیره</button>
+                  <button class="btn secondary" id="reset-profile">بازنشانی</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Messages / Chat -->
+          <section id="messages" class="page-section" style="display:none">
+            <h2 style="margin:0 0 12px 0">پیام‌ها</h2>
+            <div class="chat" id="chat-panel">
+              <div class="contacts" id="contacts-list"><!-- populated --></div>
+              <div class="conv" id="conversation">
+                <div style="padding:12px;border-bottom:1px solid #eef6ff;display:flex;align-items:center;gap:12px">
+                  <div id="conv-title" style="font-weight:700">انتخاب یک گفتگو</div>
+                  <div style="margin-left:auto" id="conv-status" class="small"></div>
+                </div>
+                <div class="messages" id="messages-box" aria-live="polite"></div>
+                <div class="compose">
+                  <input type="text" id="message-input" placeholder="پیام خود را بنویسید..." aria-label="پیام">
+                  <button class="btn" id="send-btn">ارسال</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- other placeholders -->
+          <section id="students" class="page-section" style="display:none">
+            <h2 style="margin:0 0 12px 0">دانش‌آموزان</h2>
+            <div class="card" style="padding:12px">لیست دانش‌آموزان و مدیریت (نمونه)</div>
+          </section>
+
+          <section id="grades" class="page-section" style="display:none">
+            <h2 style="margin:0 0 12px 0">نمرات</h2>
+            <div class="card">مدیریت نمرات (نمونه)</div>
+          </section>
+
+          <section id="settings" class="page-section" style="display:none">
+            <h2 style="margin:0 0 12px 0">تنظیمات</h2>
+            <div class="card">تنظیمات حساب (نمونه)</div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
   <script>
-    let tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      let username = document.getElementById('username').value;
-      let password = document.getElementById('password').value;
-      
-      const messageEl = document.getElementById('message');
-      messageEl.innerHTML = "🔐 در حال بررسی اطلاعات...";
-      
-      setTimeout(function() {
-        tg.sendData(JSON.stringify({
-          action: 'login',
-          username: username,
-          password: password
-        }));
-        messageEl.innerHTML = "✅ ورود موفق! در حال انتقال...";
-        setTimeout(function() {
-          tg.close();
-        }, 2000);
-      }, 1500);
-    });
+    (function(){
+      /* AUTH: username ali / password 1234 */
+      const loginScreen = document.getElementById('loginScreen');
+      const appRoot = document.getElementById('appRoot');
+      const loginForm = document.getElementById('loginForm');
+      const loginMessage = document.getElementById('loginMessage');
+
+      function isLogged() { return sessionStorage.getItem('panel_logged') === '1'; }
+      function setLogged(v){ if(v) sessionStorage.setItem('panel_logged','1'); else sessionStorage.removeItem('panel_logged'); }
+
+      if(isLogged()){
+        loginScreen.classList.add('hidden');
+        appRoot.style.display = '';
+      } else {
+        appRoot.style.display = 'none';
+      }
+
+      loginForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        const u = document.getElementById('username').value.trim();
+        const p = document.getElementById('password').value;
+        loginMessage.textContent = '🔐 در حال بررسی اطلاعات...';
+
+        setTimeout(()=> {
+          if(u === 'ali' && p === '1234'){
+            setLogged(true);
+            loginMessage.textContent = '✅ ورود موفق — در حال انتقال...';
+            loginScreen.classList.add('hidden');
+            appRoot.style.display = '';
+            setTimeout(()=> { loginMessage.textContent = ''; showToast('خوش آمدید، ' + 'ali'); }, 600);
+          } else {
+            setLogged(false);
+            loginMessage.textContent = '❌ نام‌کاربری یا رمز عبور اشتباه است.';
+            showToast('نام‌کاربری یا رمز اشتباه');
+          }
+        }, 700);
+      });
+
+      function showToast(text, t=1400){ const d=document.createElement('div'); d.className='toast'; d.textContent=text; document.body.appendChild(d); requestAnimationFrame(()=> d.classList.add('show')); setTimeout(()=> d.classList.remove('show'), t); setTimeout(()=> d.remove(), t+300); }
+
+      // ---- existing app JS (kept, slightly adapted) ----
+      function animateIn(el, cls='animate-in', delay=0){ if(!el) return; el.classList.remove(cls); void el.offsetWidth; setTimeout(()=> el.classList.add(cls), delay); }
+      function stagger(nodes, fn, base=70){ Array.from(nodes).forEach((n,i)=> setTimeout(()=> fn(n,i), i*base)); }
+      function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+      const sidebar = document.getElementById('sidebar');
+      const toggleSidebar = document.getElementById('toggleSidebar');
+      toggleSidebar.addEventListener('click', ()=> sidebar.classList.toggle('collapsed'));
+
+      const nav = document.getElementById('nav');
+      const sections = ['dashboard','parents','profile','messages','students','grades','settings'];
+      const pageTitle = document.getElementById('page-title');
+      const pageSub = document.getElementById('page-sub');
+      const sidebarName = document.getElementById('sidebar-name');
+      const sidebarAvatar = document.getElementById('sidebar-avatar');
+      const profilePhoto = document.getElementById('profile-photo');
+      const inputName = document.getElementById('input-name');
+      const inputRole = document.getElementById('input-role');
+      const inputBio = document.getElementById('input-bio');
+      const photoInput = document.getElementById('photo-input');
+      const changePhotoBtn = document.getElementById('change-photo-btn');
+      const saveBtn = document.getElementById('save-profile');
+      const resetBtn = document.getElementById('reset-profile');
+
+      const contactsList = document.getElementById('contacts-list');
+      const messagesBox = document.getElementById('messages-box');
+      const convTitle = document.getElementById('conv-title');
+      const convStatus = document.getElementById('conv-status');
+      const messageInput = document.getElementById('message-input');
+      const sendBtn = document.getElementById('send-btn');
+      const search = document.getElementById('search');
+      const studentsTable = document.querySelector('#students-table tbody');
+
+      // parents elements
+      const parentsSection = document.getElementById('parents');
+      const parentForm = document.getElementById('parent-form');
+      const parentUsername = document.getElementById('parent-username');
+      const parentPassword = document.getElementById('parent-password');
+      const parentStudentId = document.getElementById('parent-student-id');
+      const parentPhotoBtn = document.getElementById('parent-photo-btn');
+      const parentPhotoInput = document.getElementById('parent-photo-input');
+      const parentPhotoPreview = document.getElementById('parent-photo-preview');
+      const parentSave = document.getElementById('parent-save');
+      const parentReset = document.getElementById('parent-reset');
+      const parentsListEl = document.getElementById('parents-list');
+
+      const CONTACTS = [
+        {id:1,name:'مینا حسینی',last:'سلام! فردا کلاس داریم؟',avatar:'م'},
+        {id:2,name:'امیر محمدی',last:'پروژه را ارسال کردم',avatar:'ا'},
+        {id:3,name:'سارا احمدی',last:'سپاس',avatar:'س'}
+      ];
+      const MESSAGES = {1:[{from:'them',text:'سلام معلم!',time:Date.now()-3600*1000}],2:[{from:'them',text:'پروژه آپلود شد',time:Date.now()-1800*1000}],3:[{from:'them',text:'ممنون',time:Date.now()-600*1000}]};
+      let activeContact = null;
+
+      const PARENTS_KEY = 'panel_parents_v1';
+      let parents = JSON.parse(localStorage.getItem(PARENTS_KEY) || '[]');
+
+      const PROFILE_KEY = 'panel_profile_v1';
+      const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+      const defaultProfile = {name:'علی رضایی', role:'مدیر کلاس', bio:'', photo:null};
+      const profile = Object.assign({}, defaultProfile, saved || {});
+      function renderProfile(){
+        inputName.value = profile.name; inputRole.value = profile.role; inputBio.value = profile.bio;
+        sidebarName.textContent = profile.name;
+        document.getElementById('page-title').textContent = 'سلام، ' + (profile.name.split(' ')[0] || profile.name);
+        if(profile.photo){ profilePhoto.src = profile.photo; profilePhoto.style.display=''; sidebarAvatar.textContent=''; sidebarAvatar.style.backgroundImage=`url(${profile.photo})`; sidebarAvatar.style.backgroundSize='cover'; sidebarAvatar.style.backgroundPosition='center'; }
+        else { profilePhoto.src=''; profilePhoto.alt='بدون تصویر'; sidebarAvatar.textContent = profile.name[0] || 'ع'; sidebarAvatar.style.backgroundImage=''; }
+        animateIn(sidebarAvatar,'animate-in',10);
+      }
+      renderProfile();
+
+      function showSection(key){
+        ['dashboard','parents','profile','messages','students','grades','settings'].forEach(s=>{
+          const el = document.getElementById(s);
+          if(!el) return;
+          el.style.display = (s===key ? '' : 'none');
+          if(s===key) animateIn(el,'animate-in',20);
+        });
+        nav.querySelectorAll('a').forEach(a=>a.classList.toggle('active', a.dataset.section===key));
+        const titles = {dashboard:'داشبورد',parents:'والدین',profile:'پروفایل',messages:'پیام‌ها',students:'دانش‌آموزان',grades:'نمرات',settings:'تنظیمات'};
+        pageTitle.textContent = titles[key] || 'پنل';
+        pageSub.textContent = (key==='dashboard') ? 'نمای کلی' : '';
+        if(key==='parents') parentUsername.focus();
+      }
+
+      nav.addEventListener('click', e=>{
+        const a = e.target.closest('a[data-section]');
+        if(!a) return;
+        e.preventDefault();
+        const key = a.dataset.section;
+        if(key === 'logout'){
+          setLogged(false);
+          loginScreen.classList.remove('hidden');
+          appRoot.style.display = 'none';
+          showToast('با موفقیت خارج شدید');
+          return;
+        }
+        if(key === 'dashboard'){ showSection('dashboard'); return; }
+        showSection(key);
+        if(key === 'messages') initChat();
+      });
+
+      search.addEventListener('input', ()=> {
+        const q = search.value.trim().toLowerCase();
+        Array.from(studentsTable.rows).forEach(row=>{
+          const name = (row.dataset.name || row.cells[0].textContent).toLowerCase();
+          const cls = (row.dataset.class || row.cells[1].textContent).toLowerCase();
+          row.style.display = (name+cls).includes(q) ? '' : 'none';
+        });
+      });
+
+      studentsTable.addEventListener('click', e=>{
+        const tr = e.target.closest('tr'); if(!tr) return;
+        openModal(`${tr.dataset.name}`, `<p>کلاس: <strong>${tr.dataset.class}</strong></p><p>وضعیت: <strong>${tr.dataset.status}</strong></p>`);
+      });
+
+      changePhotoBtn.addEventListener('click', ()=> photoInput.click());
+      photoInput.addEventListener('change', ()=>{
+        const f = photoInput.files && photoInput.files[0]; if(!f) return;
+        const r = new FileReader();
+        r.onload = ()=>{ profile.photo = r.result; renderProfile(); localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); showToast('عکس پروفایل به‌روزرسانی شد'); };
+        r.readAsDataURL(f);
+      });
+
+      saveBtn.addEventListener('click', ()=>{ profile.name = inputName.value.trim() || defaultProfile.name; profile.role = inputRole.value.trim() || defaultProfile.role; profile.bio = inputBio.value.trim() || ''; localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); renderProfile(); showToast('پروفایل ذخیره شد'); });
+      resetBtn.addEventListener('click', ()=>{ localStorage.removeItem(PROFILE_KEY); Object.assign(profile, defaultProfile); renderProfile(); showToast('پروفایل بازنشانی شد'); });
+
+      document.querySelectorAll('.card').forEach(card=>{
+        card.addEventListener('click', ()=>{
+          const a = card.dataset.action;
+          if(a === 'students'){ showSection('students'); nav.querySelector('a[data-section="students"]').classList.add('active'); }
+          else if(a === 'classes'){ showToast('نمایش کلاس‌ها (نمونه)'); }
+          else if(a === 'notifications'){ showToast('هیچ اعلان جدیدی وجود ندارد'); }
+          else if(a === 'parents'){ showSection('parents'); }
+        });
+      });
+
+      function openModal(title, html){
+        const back = document.createElement('div'); back.className='modal-backdrop';
+        const modal = document.createElement('div'); modal.className='modal';
+        modal.innerHTML = `<h3>${escapeHtml(title)}</h3><div>${html}</div><div style="margin-top:10px;text-align:left"><button class="btn" id="close-modal">بستن</button></div>`;
+        back.appendChild(modal); document.body.appendChild(back);
+        requestAnimationFrame(()=> modal.classList.add('open'));
+        back.addEventListener('click', e=>{ if(e.target===back) back.remove(); });
+        modal.querySelector('#close-modal').addEventListener('click', ()=> back.remove());
+      }
+
+      function showToast(text, t=1400){ const d=document.createElement('div'); d.className='toast'; d.textContent=text; document.body.appendChild(d); requestAnimationFrame(()=> d.classList.add('show')); setTimeout(()=> d.classList.remove('show'), t); setTimeout(()=> d.remove(), t+300); }
+
+      function initChat(){
+        contactsList.innerHTML = '';
+        CONTACTS.forEach((c,i)=>{
+          const div = document.createElement('div'); div.className='contact'; div.dataset.id = c.id;
+          div.innerHTML = `<div class="c-avatar">${c.avatar}</div><div style="flex:1"><div style="font-weight:700">${escapeHtml(c.name)}</div><div style="font-size:13px;color:#6b7b8f">${escapeHtml(c.last)}</div></div>`;
+          div.addEventListener('click', ()=> openConversation(c.id));
+          contactsList.appendChild(div);
+          setTimeout(()=> div.classList.add('visible'), i*70);
+        });
+        if(!activeContact) setTimeout(()=> openConversation(CONTACTS[0].id), 120);
+      }
+
+      function openConversation(id){
+        activeContact = id;
+        contactsList.querySelectorAll('.contact').forEach(el=> el.classList.toggle('active', Number(el.dataset.id)===id));
+        const contact = CONTACTS.find(c=>c.id===id);
+        convTitle.textContent = contact.name;
+        convStatus.textContent = '';
+        renderMessages(id);
+      }
+
+      function renderMessages(id){
+        messagesBox.innerHTML = '';
+        const list = (MESSAGES[id] || []);
+        list.forEach((m, idx)=>{
+          const div = document.createElement('div'); div.className='msg ' + (m.from==='me' ? 'out' : 'in');
+          div.textContent = m.text; messagesBox.appendChild(div);
+          setTimeout(()=> div.classList.add('show'), idx * 80);
+        });
+        setTimeout(()=> { messagesBox.scrollTop = messagesBox.scrollHeight; }, Math.max(100, list.length*60));
+      }
+
+      sendBtn.addEventListener('click', sendMessage);
+      messageInput.addEventListener('keydown', e=> { if(e.key==='Enter') sendMessage(); });
+      function sendMessage(){ const txt = messageInput.value.trim(); if(!txt || !activeContact) return; MESSAGES[activeContact] = MESSAGES[activeContact] || []; MESSAGES[activeContact].push({from:'me',text:txt,time:Date.now()}); renderMessages(activeContact); messageInput.value=''; setTimeout(()=>{ MESSAGES[activeContact].push({from:'them',text:'(پاسخ خودکار) دریافت شد',time:Date.now()}); renderMessages(activeContact); },700); }
+
+      parentPhotoBtn.addEventListener('click', ()=> parentPhotoInput.click());
+      parentPhotoInput.addEventListener('change', ()=>{
+        const f = parentPhotoInput.files && parentPhotoInput.files[0]; if(!f) return;
+        const r = new FileReader();
+        r.onload = ()=>{ parentPhotoPreview.src = r.result; parentPhotoPreview.style.display = ''; parentPhotoPreview.dataset.data = r.result; };
+        r.readAsDataURL(f);
+      });
+
+      function saveParentsToStorage(){ localStorage.setItem(PARENTS_KEY, JSON.stringify(parents)); }
+      function renderParentsList(){
+        parentsListEl.innerHTML = '';
+        if(parents.length === 0){ parentsListEl.innerHTML = '<div class="small-muted">هیچ والد ثبت نشده است.</div>'; return; }
+        parents.slice().reverse().forEach((p, idx)=>{
+          const el = document.createElement('div'); el.className='parent-item animate-in';
+          el.innerHTML = `
+            <img src="${p.photo || ''}" alt="عکس" onerror="this.style.display='none'">
+            <div class="meta">
+              <div style="font-weight:700">${escapeHtml(p.username)}</div>
+              <div class="small-muted">آی‌دی دانش‌آموز: ${escapeHtml(p.studentId || '-')}</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn" data-action="edit" data-id="${p.id}">ویرایش</button>
+              <button class="btn secondary" data-action="del" data-id="${p.id}">حذف</button>
+            </div>
+          `;
+          parentsListEl.appendChild(el);
+        });
+      }
+
+      function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+      parentForm.addEventListener('submit', e=>{
+        e.preventDefault();
+        const username = parentUsername.value.trim();
+        const password = parentPassword.value.trim();
+        if(!username || !password){ showToast('نام‌کاربری و پسورد الزامی است'); return; }
+        const studentId = parentStudentId.value.trim();
+        const photo = parentPhotoPreview.dataset.data || '';
+        if(parents.some(p=>p.username === username)){ showToast('نام‌کاربری تکراری است'); return; }
+        const obj = {id: uid(), username, password, studentId, photo};
+        parents.push(obj); saveParentsToStorage(); renderParentsList(); parentForm.reset(); parentPhotoPreview.src=''; parentPhotoPreview.style.display='none'; delete parentPhotoPreview.dataset.data;
+        showToast('والد اضافه شد');
+      });
+
+      parentsListEl.addEventListener('click', e=>{
+        const btn = e.target.closest('button[data-action]'); if(!btn) return;
+        const id = btn.dataset.id;
+        const action = btn.dataset.action;
+        const idx = parents.findIndex(p=>p.id===id);
+        if(idx === -1) return;
+        if(action === 'del'){ parents.splice(idx,1); saveParentsToStorage(); renderParentsList(); showToast('والد حذف شد'); }
+        if(action === 'edit'){
+          const p = parents[idx];
+          parentUsername.value = p.username; parentPassword.value = p.password; parentStudentId.value = p.studentId || '';
+          if(p.photo){ parentPhotoPreview.src = p.photo; parentPhotoPreview.style.display=''; parentPhotoPreview.dataset.data = p.photo; } else { parentPhotoPreview.style.display='none'; }
+          parents.splice(idx,1); saveParentsToStorage(); renderParentsList();
+          showToast('در حال ویرایش — تغییرات را ذخیره کنید');
+        }
+      });
+
+      parentReset.addEventListener('click', ()=>{ parentForm.reset(); parentPhotoPreview.src=''; parentPhotoPreview.style.display='none'; delete parentPhotoPreview.dataset.data; });
+
+      renderParentsList();
+      showSection('dashboard');
+      const initialCards = document.querySelectorAll('.card-row .card');
+      stagger(initialCards, (el)=> el.classList.add('animate-in'), 80);
+
+    })();
   </script>
 </body>
 </html>
-
