@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -181,15 +180,14 @@
           <button class="toggle-btn" id="toggleSidebar" aria-label="باز/بسته کردن منو">☰</button>
           <div class="logo">
             <div class="long">لیسه خاتم النبیین</div>
-            <div class="short">خاتم</div>
           </div>
         </div>
 
         <div class="user">
-          <div class="avatar" id="sidebar-avatar" aria-hidden="true">ع</div>
+          <div class="avatar" id="sidebar-avatar" aria-hidden="true"><img src="https://i.ibb.co/7JKqJxVp/logo.jpg" alt=""></div>
           <div class="meta">
-            <div style="font-weight:600" id="sidebar-name">علی رضایی</div>
-            <div style="font-size:12px;opacity:.9" id="sidebar-role">مدیر کلاس</div>
+            <div style="font-weight:600" id="sidebar-name">علی سجاد صفدری</div>
+            <div style="font-size:12px;opacity:.9" id="sidebar-role">برنامه نویس وبسایت</div>
           </div>
         </div>
 
@@ -210,7 +208,7 @@
       <main class="main" role="main" id="main">
         <div class="header">
           <div>
-            <h1 class="hi" id="page-title">سلام، علی</h1>
+            <h1 class="hi" id="page-title">سلام، صفدری</h1>
             <div class="small" id="page-sub">به پنل کاربری خوش آمدید</div>
           </div>
           <div>
@@ -222,7 +220,7 @@
           <!-- Dashboard (default) -->
           <section id="dashboard" class="page-section">
             <div class="card-row">
-              <div class="card" data-action="classes"><div style="font-size:13px;color:#6b7b8f">کلاس‌های فعال</div><div style="font-size:28px;font-weight:700;margin-top:8px">8</div></div>
+              <div class="card" data-action="classes"><div style="font-size:13px;color:#6b7b8f">صنف های فعال</div><div style="font-size:28px;font-weight:700;margin-top:8px">8</div></div>
               <div class="card" data-action="students"><div style="font-size:13px;color:#6b7b8f">دانش‌آموزان</div><div style="font-size:28px;font-weight:700;margin-top:8px">124</div></div>
               <div class="card" data-action="notifications"><div style="font-size:13px;color:#6b7b8f">اعلان‌ها</div><div style="font-size:28px;font-weight:700;margin-top:8px">3</div></div>
               <div class="card" data-action="parents"><div style="font-size:13px;color:#6b7b8f">والدین</div><div style="font-size:22px;font-weight:700;margin-top:8px">مدیریت والدین</div></div>
@@ -233,9 +231,9 @@
               <table class="table" role="table" aria-label="students" id="students-table">
                 <thead><tr><th>نام</th><th>کلاس</th><th>وضعیت</th></tr></thead>
                 <tbody>
-                  <tr data-name="مینا حسینی" data-class="سال سوم" data-status="فعال"><td>مینا حسینی</td><td>سال سوم</td><td>فعال</td></tr>
-                  <tr data-name="امیر محمدی" data-class="سال دوم" data-status="غیبت"><td>امیر محمدی</td><td>سال دوم</td><td>غیبت</td></tr>
-                  <tr data-name="سارا احمدی" data-class="سال اول" data-status="فعال"><td>سارا احمدی</td><td>سال اول</td><td>فعال</td></tr>
+                  <tr data-name="مهدی پیمان" data-class="سال سوم" data-status="فعال"><td>مهدی پیمان</td><td>سال سوم</td><td>فعال</td></tr>
+                  <tr data-name="امیر محمدی" data-class="سال دوم" data-status="غیر فعال"><td>امیر محمدی</td><td>سال دوم</td><td>غیر فعال</td></tr>
+                  <tr data-name="بص احمدی" data-class="سال اول" data-status="فعال"><td>بص احمدی</td><td>سال اول</td><td>فعال</td></tr>
                 </tbody>
               </table>
             </section>
@@ -288,7 +286,7 @@
               </div>
               <div class="meta">
                 <div style="margin-bottom:8px"><label>نام کامل</label><input type="text" id="input-name"></div>
-                <div style="margin-bottom:8px"><label>نقش</label><input type="text" id="input-role" placeholder="مثلاً: مدیر کلاس"></div>
+                <div style="margin-bottom:8px"><label>نقش</label><input type="text" id="input-role" placeholder="مثلاً: برنامه نویس "></div>
                 <div style="margin:8px 0"><label>درباره</label><textarea id="input-bio" rows="3" placeholder="چند کلمه درباره شما..."></textarea></div>
                 <div style="display:flex;gap:8px;margin-top:8px">
                   <button class="btn" id="save-profile">ذخیره</button>
@@ -425,11 +423,11 @@
       const parentsListEl = document.getElementById('parents-list');
 
       const CONTACTS = [
-        {id:1,name:'مینا حسینی',last:'سلام! فردا کلاس داریم؟',avatar:'م'},
-        {id:2,name:'امیر محمدی',last:'پروژه را ارسال کردم',avatar:'ا'},
-        {id:3,name:'سارا احمدی',last:'سپاس',avatar:'س'}
+        {id:1,name:'مینا حسینی',last:'سلام! خوبی ؟',avatar:'مینا'},
+        {id:2,name:'امیر محمدی',last:'پروژه را ارسال کردم',avatar:'امیر'},
+        {id:3,name:'سارا احمدی',last:'سپاس',avatar:'سارا'}
       ];
-      const MESSAGES = {1:[{from:'them',text:'سلام معلم!',time:Date.now()-3600*1000}],2:[{from:'them',text:'پروژه آپلود شد',time:Date.now()-1800*1000}],3:[{from:'them',text:'ممنون',time:Date.now()-600*1000}]};
+      const MESSAGES = {1:[{from:'them',text:'سلام استاد!',time:Date.now()-3600*1000}],2:[{from:'them',text:'پروژه آپلود شد',time:Date.now()-1800*1000}],3:[{from:'them',text:'تشکر',time:Date.now()-600*1000}]};
       let activeContact = null;
 
       const PARENTS_KEY = 'panel_parents_v1';
@@ -437,7 +435,7 @@
 
       const PROFILE_KEY = 'panel_profile_v1';
       const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
-      const defaultProfile = {name:'علی رضایی', role:'مدیر کلاس', bio:'', photo:null};
+      const defaultProfile = {name:'علی سجاد صفدری', role:'برنامه نویس وبسایت', bio:'', photo:null};
       const profile = Object.assign({}, defaultProfile, saved || {});
       function renderProfile(){
         inputName.value = profile.name; inputRole.value = profile.role; inputBio.value = profile.bio;
