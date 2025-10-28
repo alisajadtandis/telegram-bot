@@ -545,7 +545,7 @@
       transform: translateX(0);
       transition: all 0.3s ease 0.1s;
     }
-
+    
     .user{
       display:flex;
       gap:12px;
@@ -591,7 +591,7 @@
       flex: 1;
       padding-left: 0;
       padding-right: 8px;
-      max-height: calc(100vh - 200px);
+      max-height: calc(100vh - 150px);
       transition: all 0.3s ease;
       direction: ltr; /* جهت محتوا به چپ */
     }
@@ -1016,6 +1016,67 @@
     .list-item .actions .edit-btn:hover {
       background: #e7f1ff;
     }
+
+    /* استایل‌های بخش سرمعلمیت */
+    .submenu-item {
+      display: block;
+      padding: 8px 12px;
+      margin: 4px 0;
+      background: rgba(255,255,255,0.95);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--primary);
+      font-size: 14px;
+      transition: all 0.2s ease;
+      border: 1px solid #145bb2;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .submenu-item:hover {
+      background: var(--white);
+      border-color: var(--primary);
+      transform: translateX(-4px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .menu-item {
+        transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-color: #e6eef8;
+    }
+
+    .menu-toggle {
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .menu-toggle:hover {
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .submenu {
+      background: rgba(255,255,255,0.98);
+      border-radius: 8px;
+      border: 1px solid #e6eef8;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 768px) {
+      .search-row {
+        grid-template-columns: 1fr !important;
+      }
+  
+      .menu-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1299,66 +1360,390 @@
               </div>
             </div>
           </section>
-
-          <div class="moving-bubble" aria-hidden="true"></div>
-
-          <button class="create-account" id="openCreate">+ ساخت اکانت</button>
-
-          <div class="modal-back" id="modalBack">
-            <div class="modal" role="dialog" aria-modal="true">
-              <h3>ساخت اکانت جدید</h3>
-              <h4>برای ساخت اکانت جدید شما باید رهنمایی را بخوانید ، پس لطفا روی <a href="asco/رهنما/login_2.html" style="color: #00b4d8; text-decoration: none;"> رهنمایی </a>کلیک کنید ...</h4>
-
-              <div class="form-row">
-                <div class="col">
-                  <label>نوع اکانت</label>
-                  <select id="accType" class="select">
-                    <option value="parent">والد</option>
-                    <option value="teacher">استاد</option>
-                    <option value="student">شاگرد</option>
-                  </select>
-                </div>
-                <div class="col">
-                  <label>نام کامل</label>
-                  <input id="accName" class="input" placeholder="مثلاً: علی سجاد">
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="col">
-                  <label>صنف</label>
-                  <input id="accClass" class="input" placeholder="مثلاً: یازدهم">
-                </div>
-                <div class="col">
-                  <label>وضعیت</label>
-                  <select id="accStatus" class="select">
-                    <option value="online">آنلاین</option>
-                    <option value="offline">آفلاین</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="col">
-                  <label>اطلاعات اضافی</label>
-                  <input id="accNote" class="input" placeholder="مثلاً: مالک یا سرپرست">
-                </div>
-                <div class="col">
-                  <label>تعداد اعلام</label>
-                  <input id="accAnn" type="number" class="input" min="0" value="0">
-                </div>
-              </div>
-
-              <div class="modal-actions">
-                <button class="btn primary" id="saveAcc">ذخیره اکانت</button>
-                <button class="btn ghost" id="closeModal">انصراف</button>
+          
+          <!-- بخش سرمعلمیت -->
+          <section id="sarteacher" class="page-section" style="display:none">
+            <div class="topbar">
+              <div class="title">
+                <h2>سرمعلمیت</h2>
+                <p>مدیریت کامل سیستم آموزشی</p>
               </div>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
+
+            <!-- منوی کشویی سرمعلمیت -->
+            <div class="sarteacher-menu" style="background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e6eef8;">
+              <div class="menu-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+      
+                <!-- منوی شاگرد -->
+                <div class="menu-category">
+                  <button class="menu-toggle" data-category="shagerd" style="width: 100%; text-align: right; padding: 12px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-user-graduate" style="margin-left: 8px;"></i>
+                    شاگرد
+                    <i class="fas fa-chevron-down" style="margin-right: auto; transition: transform 0.3s ease;"></i>
+                </button>
+                  <div class="submenu" data-category="shagerd" style="display: none; margin-top: 8px; padding-right: 20px;">
+                    <a href="#" class="submenu-item">تمام شاگردان</a>
+                    <a href="#" class="submenu-item">ثبت نام شاگردان</a>
+                    <a href="#" class="submenu-item">تبدیل صنوف شاگردان</a>
+                    <a href="#" class="submenu-item">کارت سوانح شاگردان</a>
+                    <a href="#" class="submenu-item">سه پارچه رفت</a>
+                    <a href="#" class="submenu-item">سه پارچه آمد</a>
+                    <a href="#" class="submenu-item">اخراج یا منفک</a>
+                    <a href="#" class="submenu-item">آی دی کارت شاگردان</a>
+                    <a href="#" class="submenu-item">برگه های رخصتی شاگردان</a>
+                    <a href="#" class="submenu-item">تبدیلی سال شاگردان</a>
+                  </div>
+              </div>
+
+                <!-- منوی حاضری شاگردان -->
+                <div class="menu-category">
+                  <button class="menu-toggle" data-category="hazeri" style="width: 100%; text-align: right; padding: 12px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-user-check" style="margin-left: 8px;"></i>
+                    حاضری شاگردان
+                    <i class="fas fa-chevron-down" style="margin-right: auto; transition: transform 0.3s ease;"></i>
+                  </button>
+                <div class="submenu" data-category="hazeri" style="display: none; margin-top: 8px; padding-right: 20px;">
+                    <a href="#" class="submenu-item">حاضری شاگردان</a>
+                    <a href="#" class="submenu-item">حاضری ساعتوار شاگردان</a>
+                    <a href="#" class="submenu-item">ساعت حاضری الکترونیکی</a>
+                    <a href="#" class="submenu-item">حاضر یا غیر حاضر ساختن شاگرد</a>
+                    <a href="#" class="submenu-item">راپور حاضری شاگردان</a>
+                    <a href="#" class="submenu-item">راپور حاضری ساعتوار شاگردان</a>
+                    <a href="#" class="submenu-item">حاضری عمومی صنوف</a>
+                    <a href="#" class="submenu-item">راپور غیر حاضری تمام شاگردان</a>
+                    <a href="#" class="submenu-item">ضوابط حاضری یک شاگرد</a>
+                    <a href="#" class="submenu-item">حذف حاضری یک صنف</a>
+                    <a href="#" class="submenu-item">روز های رخصتی</a>
+                  </div>
+                </div>
+
+      <!-- منوی صنوف -->
+                <div class="menu-category">
+                  <button class="menu-toggle" data-category="sanof" style="width: 100%; text-align: right; padding: 12px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-chalkboard" style="margin-left: 8px;"></i>
+                  صنوف
+                    <i class="fas fa-chevron-down" style="margin-right: auto; transition: transform 0.3s ease;"></i>
+                  </button>
+                  <div class="submenu" data-category="sanof" style="display: none; margin-top: 8px; padding-right: 20px;">
+                    <a href="#" class="submenu-item">سطوح صنوف</a>
+                    <a href="#" class="submenu-item">ایجاد صنف</a>
+                  </div>
+                </div>
+
+                <!-- منوی کتاب ها و مضامین -->
+                <div class="menu-category">
+                  <button class="menu-toggle" data-category="ketab" style="width: 100%; text-align: right; padding: 12px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-book" style="margin-left: 8px;"></i>
+                    کتاب ها و مضامین
+                    <i class="fas fa-chevron-down" style="margin-right: auto; transition: transform 0.3s ease;"></i>
+                  </button>
+                  <div class="submenu" data-category="ketab" style="display: none; margin-top: 8px; padding-right: 20px;">
+                    <a href="#" class="submenu-item">ثبت کتاب های درسی</a>
+                    <a href="#" class="submenu-item">ایجاد مضامین جدید</a>
+                    <a href="#" class="submenu-item">ثبت مضامین یک معلم</a>
+                  </div>
+                </div>
+
+                <!-- منوی پلان درسی -->
+                <div class="menu-category">
+                  <button class="menu-toggle" data-category="plan" style="width: 100%; text-align: right; padding: 12px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                      <i class="fas fa-calendar-alt" style="margin-left: 8px;"></i>
+                      پلان درسی
+                      <i class="fas fa-chevron-down" style="margin-right: auto; transition: transform 0.3s ease;"></i>
+                  </button>
+                  <div class="submenu" data-category="plan" style="display: none; margin-top: 8px; padding-right: 20px;">
+                    <a href="#" class="submenu-item">پلان تعلیمی</a>
+                      <a href="#" class="submenu-item">جدول نمره بندی</a>
+                      <a href="#" class="submenu-item">تقسیم اوقات صنوف و استادان</a>
+                      <a href="#" class="submenu-item">اصلاح اوقات درسی</a>
+                  </div>
+                </div>
+
+      <!-- منوی امتحانات -->
+                <div class="menu-category">
+                  <button class="menu-toggle" data-category="exam" style="width: 100%; text-align: right; padding: 12px; background: var(--accent); border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-file-alt" style="margin-left: 8px;"></i>
+                    امتحانات
+                    <i class="fas fa-chevron-down" style="margin-right: auto; transition: transform 0.3s ease;"></i>
+                  </button>
+                  <div class="submenu" data-category="exam" style="display: none; margin-top: 8px; padding-right: 20px;">
+                      <a href="#" class="submenu-item">نوع امتحان</a>
+                      <a href="#" class="submenu-item">ایجاد امتحانات</a>
+                      <a href="#" class="submenu-item">کارت های امتحان شاگردان</a>
+                      <a href="#" class="submenu-item">ثبت نتایج یک شاگرد</a>
+                      <a href="#" class="submenu-item">ثبت نتایج در شقه</a>
+                      <a href="#" class="submenu-item">نتایج امتحانات</a>
+                      <a href="#" class="submenu-item">تجزیه و تحلیل نمرات</a>
+                      <a href="#" class="submenu-item">تقسیم اوقات امتحان</a>
+                      <a href="#" class="submenu-item">تقسیم اوقات امتحان استادان</a>
+                    </div>
+                  </div>
+
+      <!-- سایر منوهای مستقل -->
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                  <i class="fas fa-question-circle" style="margin-left: 8px;"></i>
+                  سوالات امتحان
+                </a>
+      
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-video" style="margin-left: 8px;"></i>
+                    ویدیو های انلاین
+                </a>
+      
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                  <i class="fas fa-chart-bar" style="margin-left: 8px;"></i>
+                  راپور احصایوی شاگردان
+                </a>
+
+      <!-- ادامه منوهای مستقل -->
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                    <i class="fas fa-user-plus" style="margin-left: 8px;"></i>
+                  راپور جدید الشمولان
+                </a>
+      
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                  <i class="fas fa-mobile-alt" style="margin-left: 8px;"></i>
+                  حاضری الکترونیکی
+                </a>
+      
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                  <i class="fas fa-id-card" style="margin-left: 8px;"></i>
+                  چاپ شهرت شاگردان
+                </a>
+      
+                <a href="#" class="menu-item" style="display: flex; align-items: center; padding: 12px; background: var(--accent); border-radius: 8px; text-decoration: none; color: var(--primary); font-weight: 600; border: 1px solid #e6eef8;">
+                  <i class="fas fa-home" style="margin-left: 8px;"></i>
+                  بازگشت به صفحه اصلی
+                </a>
+              </div>
+            </div>
+
+  <!-- بخش مشاهده شاگردان -->
+            <div class="panel" style="margin-bottom: 20px; background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e6eef8;">
+              <h3>مشاهده شاگردان</h3>
+              <p style="color: var(--muted); margin-bottom: 15px;">مشاهده شاگردان به اساس انتخاب سال ، صنف ، آی دی ، نام و یا نمبر اساس شاگرد</p>
+    
+    <!-- ردیف اول: جستجو بر اساس صنف و وقت درسی -->
+              <div class="search-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <!-- جستجو بر اساس صنف -->
+                <div>
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600;">جستجو شاگرد بر اساس صنف</label>
+                  <select class="select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                    <option value="">صنف را انتخاب کنید</option>
+                    <option value="amadi1">آمادگی 1</option>
+                    <option value="amadi2">آمادگی 2</option>
+                    <option value="aval1">اول 1</option>
+                    <option value="aval2">اول 2</option>
+                    <option value="aval3">اول 3</option>
+                    <option value="dovom1">دوم 1</option>
+                    <option value="dovom2">دوم 2</option>
+                    <option value="dovom3">دوم 3</option>
+                    <option value="sevom1">سوم 1</option>
+                    <option value="sevom2">سوم 2</option>
+                    <option value="sevom3">سوم 3</option>
+                    <option value="chaharom1">چهارم 1</option>
+                    <option value="chaharom2">چهارم 2</option>
+                    <option value="chaharom3">چهارم 3</option>
+                    <option value="panjom1">پنجم 1</option>
+                    <option value="panjom2">پنجم 2</option>
+                    <option value="panjom3">پنجم 3</option>
+                    <option value="sheshom1">ششم 1</option>
+                    <option value="sheshom2">ششم 2</option>
+                    <option value="sheshom3">ششم 3</option>
+                    <option value="haftom1">هفتم 1</option>
+                    <option value="haftom2">هفتم 2</option>
+                    <option value="haftom3">هفتم 3</option>
+                    <option value="hashtom1">هشتم 1</option>
+                    <option value="hashtom2">هشتم 2</option>
+                    <option value="hashtom3">هشتم 3</option>
+                    <option value="nohom1">نهم 1</option>
+                    <option value="nohom2">نهم 2</option>
+                    <option value="nohom3">نهم 3</option>
+                    <option value="dahom1">دهم 1</option>
+                    <option value="dahom2">دهم 2</option>
+                    <option value="dahom3">دهم 3</option>
+                    <option value="yazdahom1">یازدهم 1</option>
+                    <option value="yazdahom2">یازدهم 2</option>
+                    <option value="yazdahom3">یازدهم 3</option>
+                    <option value="davazdahom1">دوازدهم 1</option>
+                    <option value="davazdahom2">دوازدهم 2</option>
+                    <option value="davazdahom3">دوازدهم 3</option>
+                  </select>
+                </div>
+
+      <!-- وقت درسی -->
+                <div>
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600;">وقت درسی</label>
+                  <select class="select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                    <option value="">وقت حاضری را انتخاب کنید</option>
+                    <option value="morning">صبح</option>
+                    <option value="afternoon">عصر</option>
+                  </select>
+                </div>
+
+      <!-- صنف -->
+                <div>
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600;">صنف</label>
+                  <select class="select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                    <option value="">صنف را انتخاب کنید</option>
+          <!-- لیست صنف ها مشابه بالا -->
+                  </select>
+                </div>
+              </div>
+
+    <!-- ردیف دوم: جستجو بر اساس آی دی، نام و نمبر اساس -->
+              <div class="search-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <!-- آی دی -->
+                <div>
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600;">جستجو شاگرد بر اساس آی دی ، نام و نمبر اساس:</label>
+                  <label style="display: block; margin-bottom: 5px; font-size: 14px;">ای دی</label>
+                  <input type="text" class="input" placeholder="آی دی شاگرد را بنویسید" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                </div>
+
+      <!-- نام شاگرد یا نام پدر -->
+                <div>
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600; opacity: 0;">فضای خالی</label>
+                  <label style="display: block; margin-bottom: 5px; font-size: 14px;">نام شاگرد یا نام پدر شاگرد</label>
+                  <input type="text" class="input" placeholder="نام شاگرد یا نام پدر شاگرد را بنویسید" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                </div>
+
+      <!-- نمبر اساس -->
+                <div>
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600; opacity: 0;">فضای خالی</label>
+                  <label style="display: block; margin-bottom: 5px; font-size: 14px;">نمبر اساس</label>
+                  <input type="text" class="input" placeholder="نمبر اساس شاگرد را بنویسید" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                </div>
+              </div>
+
+    <!-- ردیف سوم: ولی شاگرد -->
+              <div class="search-row" style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px;">
+                <div style="text-align: center;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 600;">ولی شاگرد</label>
+                  <input type="text" class="input" placeholder="ولی شاگرد را بنویسید" style="max-width: 300px; margin: 0 auto; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e6eef8; background: #fbfdff;">
+                </div>
+              </div>
+
+    <!-- ردیف چهارم: اطلاعات و دکمه‌ها -->
+              <div class="search-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <label style="font-weight: 600;">اصلاعات:</label>
+                  <button class="btn primary" style="padding: 8px 16px; background: linear-gradient(90deg,#0d6efd,#00b4d8); color: #fff; border: none; border-radius: 10px; cursor: pointer;">جستجو</button>
+                  <button class="btn" style="padding: 8px 16px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; cursor: pointer;">
+                    <i class="fas fa-file-excel"></i>
+                  </button>
+                </div>
+              </div>
+
+    <!-- ردیف پنجم: دکمه‌های چاپ -->
+              <div class="search-row" style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                <button class="btn" style="display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: var(--accent); border: 1px solid #e6eef8; border-radius: 6px; cursor: pointer; color: var(--primary);">
+                  <i class="fas fa-print"></i>
+                  فایل شهرت شاگردان
+                </button>
+                <button class="btn" style="display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: var(--accent); border: 1px solid #e6eef8; border-radius: 6px; cursor: pointer; color: var(--primary);">
+                  <i class="fas fa-print"></i>
+                  چاپ اطلاعات تماس شاگردان صنف
+                </button>
+                <button class="btn" style="display: flex; align-items: center; gap: 5px; padding: 8px 16px; background: var(--accent); border: 1px solid #e6eef8; border-radius: 6px; cursor: pointer; color: var(--primary);">
+                  <i class="fas fa-print"></i>
+                  چاپ اصلاعات شاگردان
+                </button>
+              </div>
+            </div>
+
+  <!-- جدول نتایج -->
+            <div class="panel" style="background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e6eef8;">
+              <h3>نتایج جستجو</h3>
+              <div class="table-container" style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; background: var(--white);">
+                  <thead>
+                    <tr style="background: var(--accent);">
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">شماره</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">تصویر</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">ای دی</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">نمبر اساس</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">نام</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">نام پدر</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">جنسیت</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">صنف</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">نام ولی</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">شماره تماس ولی</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">پیام</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #e6eef8; font-weight: 600;">بیشتر</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentsResults">
+          <!-- نتایج به صورت پویا نمایش داده می‌شوند -->
+                    <tr>
+                      <td colspan="12" style="padding: 20px; text-align: center; color: var(--muted);">
+                        هیچ نتیجه‌ای یافت نشد. لطفاً جستجو کنید.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+                    <div class="moving-bubble" aria-hidden="true"></div>
+
+                    <button class="create-account" id="openCreate">+ ساخت اکانت</button>
+
+                    <div class="modal-back" id="modalBack">
+                      <div class="modal" role="dialog" aria-modal="true">
+                        <h3>ساخت اکانت جدید</h3>
+                        <h4>برای ساخت اکانت جدید شما باید رهنمایی را بخوانید ، پس لطفا روی <a href="asco/رهنما/login_2.html" style="color: #00b4d8; text-decoration: none;"> رهنمایی </a>کلیک کنید ...</h4>
+
+                        <div class="form-row">
+                          <div class="col">
+                            <label>نوع اکانت</label>
+                            <select id="accType" class="select">
+                              <option value="parent">والد</option>
+                              <option value="teacher">استاد</option>
+                              <option value="student">شاگرد</option>
+                            </select>
+                          </div>
+                          <div class="col">
+                            <label>نام کامل</label>
+                            <input id="accName" class="input" placeholder="مثلاً: علی سجاد">
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="col">
+                            <label>صنف</label>
+                            <input id="accClass" class="input" placeholder="مثلاً: یازدهم">
+                          </div>
+                          <div class="col">
+                            <label>وضعیت</label>
+                            <select id="accStatus" class="select">
+                              <option value="online">آنلاین</option>
+                              <option value="offline">آفلاین</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="col">
+                            <label>اطلاعات اضافی</label>
+                            <input id="accNote" class="input" placeholder="مثلاً: مالک یا سرپرست">
+                          </div>
+                          <div class="col">
+                            <label>تعداد اعلام</label>
+                            <input id="accAnn" type="number" class="input" min="0" value="0">
+                          </div>
+                        </div>
+
+                        <div class="modal-actions">
+                          <button class="btn primary" id="saveAcc">ذخیره اکانت</button>
+                          <button class="btn ghost" id="closeModal">انصراف</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
 
   <!-- لودینگ ساده برای تغییر صفحات -->
   <div class="simple-loading" id="simpleLoading">
@@ -1557,6 +1942,12 @@
               pageSub.textContent = 'مدیریت کلاس‌های درسی';
               document.getElementById('classes').style.display = 'block';
               renderClassesList();
+              break;
+              case 'sarteacher':
+              pageTitle.textContent = 'سرمعلمیت';
+              pageSub.textContent = 'مدیریت کامل سیستم آموزشی';
+              document.getElementById('sarteacher').style.display = 'block';
+              initSarteacher();
               break;
             case 'logout':
               // بازگشت به صفحه ورود
@@ -1937,6 +2328,49 @@
             responsive: true,
             maintainAspectRatio: false
           }
+        });
+      }
+      // تابع مقداردهی اولیه بخش سرمعلمیت
+      function initSarteacher() {
+  // مدیریت منوهای کشویی
+        const menuToggles = document.querySelectorAll('.menu-toggle');
+  
+        menuToggles.forEach(toggle => {
+          toggle.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const submenu = document.querySelector(`.submenu[data-category="${category}"]`);
+            const icon = this.querySelector('.fa-chevron-down');
+      
+      // بستن تمام منوهای دیگر
+            document.querySelectorAll('.submenu').forEach(menu => {
+              if (menu !== submenu) {
+                menu.style.display = 'none';
+                const otherIcon = menu.previousElementSibling.querySelector('.fa-chevron-down');
+              if (otherIcon) {
+                  otherIcon.style.transform = 'rotate(0deg)';
+                }
+              }
+            });
+      
+            // باز/بسته کردن منوی جاری
+            if (submenu.style.display === 'block') {
+              submenu.style.display = 'none';
+              icon.style.transform = 'rotate(0deg)';
+            } else {
+              submenu.style.display = 'block';
+              icon.style.transform = 'rotate(180deg)';
+            }
+          });
+        });
+  
+            // مدیریت آیتم‌های زیرمنو
+        const submenuItems = document.querySelectorAll('.submenu-item');
+        submenuItems.forEach(item => {
+          item.addEventListener('click', function(e) {
+            e.preventDefault();
+                // در اینجا می‌توانید عملیات مربوط به هر آیتم را اضافه کنید
+            console.log('کلیک روی:', this.textContent);
+          });
         });
       }
       
